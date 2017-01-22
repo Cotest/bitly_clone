@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+<form action="{% url 'short_url_create' %}" method="POST">
+  {% csrf_token %}
+  {{ form.as_ul }}
+  <input type="submit">
+</form>
+{% if short_url %}
+  <a href="{{ short_url }}">{{ short_url }}</a>
+{% endif %}
+</body>
+</html>
