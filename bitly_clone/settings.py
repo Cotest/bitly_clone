@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+from celery.schedules import crontab
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cacheops',
     'short_urls'
 ]
 
@@ -107,9 +110,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'Europe/Moscow'
+CELERY_TIMEZONE = TIME_ZONE
 
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'ru'
 
 USE_I18N = True
 
@@ -121,6 +125,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
+BROKER_URL = 'redis://localhost:6379/2'
+
 STATIC_URL = '/static/'
 
 LENGTH_SHORT_SLUG = 8
+
+CACHEOPS_REDIS = "redis://localhost:6379/1"
+
+CACHEOPS = {
+    'short_urls.ShortUrl': {'ops': 'get', 'timeout': 60 * 15},
+}
+
+CELERYBEAT_SCHEDULE = {
+    'clear_old_short_url': {
+        'task': 'short_urls.tasks.clear_old_short_url',
+        'schedule': crontab(hour=0, minute=0)
+    },
+}

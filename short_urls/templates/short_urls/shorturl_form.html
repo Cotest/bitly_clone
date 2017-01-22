@@ -11,7 +11,36 @@
   <input type="submit">
 </form>
 {% if short_url %}
-  <a href="{{ short_url }}">{{ short_url }}</a>
+  Созданное сокращение: <a href="{{ short_url }}">{{ short_url }}</a>
+{% endif %}
+{% if page_short_urls %}
+  <table border="2">
+    {% for short_url in page_short_urls %}
+      <tr>
+        <td>
+          <a href="{{ short_url.url }}">{{ short_url.url }}</a>
+        </td>
+        <td>
+          <a href="{{ short_url.short_url }}">{{ short_url.short_url }}</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  <div class="pagination">
+    <span class="step-links">
+      {% if page_short_urls.has_previous %}
+        <a href="?page={{ page_short_urls.previous_page_number }}">previous</a>
+      {% endif %}
+
+      <span class="current">
+        Page {{ page_short_urls.number }} of {{ page_short_urls.paginator.num_pages }}.
+      </span>
+
+      {% if page_short_urls.has_next %}
+        <a href="?page={{ page_short_urls.next_page_number }}">next</a>
+      {% endif %}
+    </span>
+  </div>
 {% endif %}
 </body>
 </html>
